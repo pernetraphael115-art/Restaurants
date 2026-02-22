@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
             el.addEventListener('mousedown', (e) => {
                 if (e.button !== 0) return; // left click only
                 e.stopPropagation();
-                e.preventDefault();
+                // Removed e.preventDefault() to allow native text selection/focus
 
                 const startX = e.clientX;
                 const startY = e.clientY;
@@ -261,6 +261,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         el.style.cursor = 'grabbing';
                         el.style.zIndex = '9000';
                         selectElement(el);
+                        // Prevent text selection only while actually dragging
+                        document.body.style.userSelect = 'none';
                     }
                     if (dragging) {
                         el.style.transform = `translate(${origTx + dx}px, ${origTy + dy}px)`;
@@ -272,6 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.removeEventListener('mousemove', onMove);
                     window.removeEventListener('mouseup', onUp);
                     el.style.cursor = '';
+                    document.body.style.userSelect = '';
                     if (dragging) {
                         isDragging = false;
                         el.style.zIndex = '';
@@ -284,6 +287,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 window.addEventListener('mousemove', onMove);
                 window.addEventListener('mouseup', onUp);
+            });
+
+            // Fallback for click (important for images which might not trigger standard text selection logic correctly)
+            el.addEventListener('click', (e) => {
+                if (isDragging) return; // Handled by mouseup
+                e.stopPropagation();
+                selectElement(el);
             });
         });
     }
