@@ -652,41 +652,44 @@ document.addEventListener('DOMContentLoaded', () => {
     //  IMAGE REPLACEMENT
     // =============================================
 
-    // Trigger file input on button click
-    btnReplace.addEventListener('click', () => {
-        if (currentImageTarget) {
-            fileInput.click();
-        }
-    });
-
-
-
-    // File selected
-    fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file || !currentImageTarget) return;
-
-        const target = currentImageTarget;
-
-        // Preview immediately
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const resultUrl = ev.target.result;
-            if (target.tagName === 'IMG') {
-                target.src = resultUrl;
-            } else {
-                target.style.backgroundImage = `url('${resultUrl}')`;
+    function setupImageReplace() {
+        // Trigger file input on button click
+        btnReplace.addEventListener('click', () => {
+            if (currentImageTarget) {
+                fileInput.click();
             }
-            updateSelectionBox();
-        };
-        reader.readAsDataURL(file);
+        });
 
-        // Upload to GitHub if token saved
-        const token = localStorage.getItem('frameon_github_token');
-        if (token) {
-            uploadImage(token, file, target);
-        }
-    });
+        // File selected
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file || !currentImageTarget) return;
+
+            const target = currentImageTarget;
+
+            // Preview immediately
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const resultUrl = ev.target.result;
+                if (target.tagName === 'IMG') {
+                    target.src = resultUrl;
+                } else {
+                    target.style.backgroundImage = `url('${resultUrl}')`;
+                }
+                updateSelectionBox();
+            };
+            reader.readAsDataURL(file);
+
+            // Reset file input so same file can be re-selected
+            fileInput.value = '';
+
+            // Upload to GitHub if token saved
+            const token = localStorage.getItem('frameon_github_token');
+            if (token) {
+                uploadImage(token, file, target);
+            }
+        });
+    }
 
     async function uploadImage(token, file, target) {
         target.style.opacity = '0.5';
