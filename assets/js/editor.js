@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // =============================================
     //  CONFIGURATION (MODIFIEZ CECI POUR UN AUTRE SITE)
     // =============================================
-    const EDITOR_CONFIG = {
+    const EDITOR_CONFIG = window.EDITOR_CONFIG || {
         // 1. Identifiants GitHub
         github: {
             owner: 'VOTRE-UTILISATEUR-GITHUB',
