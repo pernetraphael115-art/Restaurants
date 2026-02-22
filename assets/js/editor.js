@@ -322,17 +322,32 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSelectionBox();
         readElementStyle(el);
 
-        // Update label
         let label = el.tagName.toLowerCase();
-        if (el.tagName === 'IMG') label = '🖼 Image';
-        else if (['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(el.tagName)) label = '📝 Titre ' + el.tagName;
-        else if (el.tagName === 'P') label = '📄 Paragraphe';
-        else if (el.tagName === 'A') label = '🔗 Lien';
-        else if (el.tagName === 'BUTTON') label = '🔘 Bouton';
-        else if (el.tagName === 'DIV' || el.tagName === 'SECTION') label = '📦 ' + el.tagName;
-        else label = '✏️ ' + label;
-        // Show/Hide Image Replace Button
+        let isImage = false;
+
         if (el.tagName === 'IMG') {
+            label = '🖼 Image';
+            isImage = true;
+        } else if (window.getComputedStyle(el).backgroundImage !== 'none' && el.tagName !== 'BODY' && el.tagName !== 'HTML' && !el.classList.contains('hero')) {
+            // Basic heuristic: if it has a background image and isn't the body/html/hero, it might be a gallery item
+            label = '🖼 Image (Fond)';
+            isImage = true;
+        } else if (['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(el.tagName)) {
+            label = '📝 Titre ' + el.tagName;
+        } else if (el.tagName === 'P') {
+            label = '📄 Paragraphe';
+        } else if (el.tagName === 'A') {
+            label = '🔗 Lien';
+        } else if (el.tagName === 'BUTTON') {
+            label = '🔘 Bouton';
+        } else if (el.tagName === 'DIV' || el.tagName === 'SECTION') {
+            label = '📦 ' + el.tagName;
+        } else {
+            label = '✏️ ' + label;
+        }
+
+        // Show/Hide Image Replace Button
+        if (isImage) {
             btnReplace.style.display = 'flex';
             currentImageTarget = el;
         } else {
@@ -637,41 +652,44 @@ document.addEventListener('DOMContentLoaded', () => {
     //  IMAGE REPLACEMENT
     // =============================================
 
-    function setupImageReplace() {
-        // Trigger file input on button click
-        btnReplace.addEventListener('click', () => {
-            if (currentImageTarget && currentImageTarget.tagName === 'IMG') {
-                fileInput.click();
+    // Trigger file input on button click
+    btnReplace.addEventListener('click', () => {
+        if (currentImageTarget) {
+            fileInput.click();
+        }
+    });
+
+
+
+    // File selected
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file || !currentImageTarget) return;
+
+        const target = currentImageTarget;
+
+        // Preview immediately
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const resultUrl = ev.target.result;
+            if (target.tagName === 'IMG') {
+                target.src = resultUrl;
+            } else {
+                target.style.backgroundImage = `url('${resultUrl}')`;
             }
-        });
+            updateSelectionBox();
+        };
+        reader.readAsDataURL(file);
 
+        // Upload to GitHub if token saved
+        const token = localStorage.getItem('frameon_github_token');
+        if (token) {
+            uploadImage(token, file, target);
+        }
+    });
 
-
-        // File selected
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file || !currentImageTarget) return;
-
-            const img = currentImageTarget;
-
-            // Preview immediately
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                img.src = ev.target.result;
-                updateSelectionBox();
-            };
-            reader.readAsDataURL(file);
-
-            // Upload to GitHub if token saved
-            const token = localStorage.getItem('frameon_github_token');
-            if (token) {
-                uploadImage(token, file, img);
-            }
-        });
-    }
-
-    async function uploadImage(token, file, img) {
-        img.style.opacity = '0.5';
+    async function uploadImage(token, file, target) {
+        target.style.opacity = '0.5';
         try {
             const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '');
             const path = `uploads/${Date.now()}_${safeName}`;
@@ -685,11 +703,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             if (!res.ok) throw new Error('Upload failed');
 
-            img.src = `assets/${path}`;
+            const uploadedUrl = `assets/${path}`;
+            if (target.tagName === 'IMG') {
+                target.src = uploadedUrl;
+            } else {
+                target.style.backgroundImage = `url('${uploadedUrl}')`;
+            }
         } catch (err) {
             console.error('Image upload error:', err);
         }
-        img.style.opacity = '1';
+        target.style.opacity = '1';
     }
 
     function fileToBase64(file) {
