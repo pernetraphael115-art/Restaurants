@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2. Connexion Admin
         auth: {
             username: 'admin',
-            password: 'CHANGEZ-CE-MOT-DE-PASSE'
+            password: 'aurum2026'
         },
         // 3. Menu de Navigation (pour le menu déroulant de l'éditeur)
         navigation: [
