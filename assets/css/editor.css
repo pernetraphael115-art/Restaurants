@@ -1,0 +1,431 @@
+/* ================================================
+   EDITOR UI — Clean, Spacious, Centered
+   ================================================ */
+:root {
+    --editor-bg: #111111;
+    --editor-surface: #1c1c1c;
+    --editor-accent: #ffd700;
+    --editor-text: #ffffff;
+    --editor-muted: rgba(255, 255, 255, 0.5);
+    --editor-border: rgba(255, 255, 255, 0.15);
+    --editor-radius: 10px;
+}
+
+/* ========= BOTTOM TOOLBAR ========= */
+#editor-toolbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: var(--editor-bg);
+    border-top: 3px solid var(--editor-accent);
+    z-index: 9999;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8);
+    font-family: 'Inter', sans-serif;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+#editor-toolbar.active {
+    transform: translateY(0);
+}
+
+body.editor-active {
+    padding-bottom: 160px;
+    /* More space for bigger toolbar */
+}
+
+/* --- Header Row --- */
+.toolbar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid var(--editor-border);
+}
+
+.editor-branding {
+    font-weight: 800;
+    color: var(--editor-accent);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.toolbar-header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+/* --- Controls Row (Main) --- */
+.toolbar-controls {
+    display: flex;
+    justify-content: center;
+    /* CENTERED as requested */
+    align-items: center;
+    padding: 16px 24px;
+    gap: 16px;
+    /* More gap */
+    flex-wrap: wrap;
+    /* allow wrap if needed on small screens, but aim for single line */
+}
+
+/* Control Group */
+.ctrl-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--editor-surface);
+    border: 1px solid var(--editor-border);
+    border-radius: var(--editor-radius);
+    padding: 8px 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.ctrl-group-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--editor-muted);
+    font-weight: 700;
+    margin-right: 4px;
+}
+
+/* Separator */
+.ctrl-sep {
+    width: 1px;
+    height: 40px;
+    background: var(--editor-border);
+    opacity: 0.5;
+}
+
+/* ========= INPUTS & BUTTONS (Bigger) ========= */
+.ctrl-input {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--editor-border);
+    color: white;
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.ctrl-input:focus {
+    border-color: var(--editor-accent);
+    background: black;
+}
+
+select.ctrl-input {
+    cursor: pointer;
+    min-width: 120px;
+}
+
+input[type="number"].ctrl-input {
+    width: 70px;
+    text-align: center;
+    font-weight: 700;
+}
+
+input[type="color"].ctrl-input {
+    width: 44px;
+    height: 44px;
+    padding: 4px;
+    cursor: pointer;
+    border-radius: 8px;
+    background: transparent;
+}
+
+/* Buttons */
+.ctrl-format-btn,
+.ctrl-align-btn {
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--editor-border);
+    color: #ddd;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+}
+
+.ctrl-format-btn:hover,
+.ctrl-align-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: white;
+    transform: translateY(-1px);
+}
+
+.ctrl-format-btn.active,
+.ctrl-align-btn.active {
+    background: var(--editor-accent);
+    color: #111;
+    border-color: var(--editor-accent);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+/* Navigation Dropdown */
+#editor-page-nav {
+    background: var(--editor-surface);
+    color: white;
+    height: 38px;
+    padding: 0 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1px solid var(--editor-border);
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+#editor-page-nav:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+#editor-page-nav:focus {
+    border-color: var(--editor-accent);
+    outline: none;
+}
+
+/* Save Button */
+.editor-btn.primary {
+    background: var(--editor-accent);
+    color: #000;
+    border: none;
+    padding: 0 24px;
+    height: 38px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.editor-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+}
+
+/* Selected Label */
+/* Selected Label */
+#selected-label {
+    background: var(--editor-surface);
+    color: var(--editor-accent);
+    padding: 0 16px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border: 1px solid var(--editor-border);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    min-width: 140px;
+    justify-content: center;
+    text-transform: capitalize;
+}
+
+/* Replace Image Button */
+#btn-replace-image {
+    background: #2a2a2a;
+    color: white;
+    border: 1px solid var(--editor-border);
+    padding: 0 20px;
+    height: 38px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: none;
+    /* toggled via JS */
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+#btn-replace-image:hover {
+    background: #333;
+    border-color: var(--editor-accent);
+    color: var(--editor-accent);
+}
+
+/* ========= MODALS & UTILS ========= */
+/* Keep existing modal styles */
+#login-modal,
+#github-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+}
+
+#login-modal.visible,
+#github-modal.visible {
+    display: flex;
+}
+
+.login-box {
+    background: #1a1a1a;
+    padding: 30px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    width: 320px;
+}
+
+.login-box h2 {
+    color: var(--editor-accent);
+    margin-bottom: 20px;
+}
+
+.login-form input {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #333;
+    border: 1px solid #444;
+    color: white;
+    border-radius: 6px;
+}
+
+.login-form button {
+    width: 100%;
+    padding: 10px;
+    background: var(--editor-accent);
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Editor Highlight */
+.editable-highlight {
+    outline: 2px dashed rgba(255, 255, 255, 0.1);
+    transition: outline 0.2s;
+}
+
+.editable-highlight:hover {
+    outline: 2px dashed var(--editor-accent);
+    cursor: grab;
+}
+
+.editable-highlight:active {
+    cursor: grabbing;
+}
+
+.editor-active {
+    cursor: default;
+}
+
+/* Selection Box */
+#editor-selection-box {
+    position: absolute;
+    border: 2px solid var(--editor-accent);
+    background: rgba(255, 215, 0, 0.05);
+    pointer-events: none;
+    z-index: 9990;
+    display: none;
+}
+
+#editor-selection-box.active {
+    display: block;
+}
+
+.resize-handle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: var(--editor-accent);
+    border: 1px solid #000;
+    pointer-events: all;
+    z-index: 9995;
+    transition: transform 0.2s;
+}
+
+.resize-handle:hover {
+    transform: scale(1.3);
+}
+
+.resize-handle.nw {
+    top: -6px;
+    left: -6px;
+    cursor: nw-resize;
+}
+
+.resize-handle.ne {
+    top: -6px;
+    right: -6px;
+    cursor: ne-resize;
+}
+
+.resize-handle.sw {
+    bottom: -6px;
+    left: -6px;
+    cursor: sw-resize;
+}
+
+.resize-handle.se {
+    bottom: -6px;
+    right: -6px;
+    cursor: se-resize;
+}
+
+.img-replace-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    /* flex hidden by opacity usually */
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 50;
+}
+
+.img-replace-overlay.visible {
+    opacity: 1;
+    pointer-events: all;
+    cursor: pointer;
+}
+
+.img-replace-overlay span {
+    background: black;
+    color: var(--editor-accent);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    border: 1px solid var(--editor-accent);
+}
+
+#file-upload-input {
+    display: none;
+}
